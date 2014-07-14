@@ -34,8 +34,10 @@ function love.draw ()
   g.line(W/2, 0, W/2, H)
   -- Draw the current view
   do
+    g.push()
     local view = views[viewnames[current]]
     view.draw(g, W/2, H)
+    g.pop()
   end
   -- Draw the crafting panel
   do

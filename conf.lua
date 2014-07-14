@@ -10,8 +10,8 @@ function love.conf(t)
 
   t.window.title = "Circuit of Mana Prototype"
   t.window.icon = nil
-  t.window.width = 1024       -- The window width (number)
-  t.window.height = 768       -- The window height (number)
+  t.window.width = 800        -- The window width (number)
+  t.window.height = 600       -- The window height (number)
   t.window.borderless = true
   t.window.resizable = false
   t.window.minwidth = 1

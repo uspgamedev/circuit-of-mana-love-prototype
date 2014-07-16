@@ -67,5 +67,5 @@ function drawMana (g)
   g.rectangle("line", 9, 29, MAX_MANA + 2, 12)
   g.setColor(30, 200, 30)
   g.rectangle("fill", 10, 30, mana, 10)
-  g.setColor(0, 0, 0)
+  g.setColor(255, 255, 255)
 end

@@ -61,4 +61,12 @@ function draw (graphics, width, height)
   for v in pairs(buttons) do
     drawButton(graphics, buttons[v])
   end
+
+  local g = graphics
+
+  for i = 0, 5 do
+    for j = 0, 5 do
+      g.circle("line", 50 + 60 * i, 80 + 60 * j, 10)
+    end
+  end
 end

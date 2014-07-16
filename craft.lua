@@ -55,6 +55,9 @@ function load()
   H = love.graphics.getHeight()
   for i=1,LAYER_NUM do
     circuit.layers[i] = {}
+    for j=1,NODE_PER_LAYER do
+      circuit.layers[i][j] = {}
+    end
   end
   local i = 0
 
@@ -75,6 +78,12 @@ function mousepressed(x, y, button)
       end
     end
   end
+  local prev_current_node = current_node
+  local prev_current_layer = current_layer
+  local prev_current_column = current_column
+  current_node = nil
+  current_layer = nil
+  current_column = nil
   for i=1,20 do
     if contains2(x, y, {x=10, y=100+(i-1)*20, w=19, h=19}) then
       current_node = i
@@ -83,8 +92,14 @@ function mousepressed(x, y, button)
   for i=1,LAYER_NUM do
     for j=1,NODE_PER_LAYER do
       if contains2(x, y, {x=55 + (j-1)*40, y=105+(i-1)*40, w=30, h=30}) then
-        current_layer = i
-        current_column = j
+        if prev_current_node then
+          circuit.layers[i][j].type = prev_current_node
+        elseif prev_current_layer and prev_current_column  then
+          circuit.layers[prev_current_layer][prev_current_column].to = {i,j}
+        else
+          current_layer = i
+          current_column = j
+        end
       end
     end
   end
@@ -114,7 +129,20 @@ function draw (graphics, width, height)
         graphics.setColor(50,50,80)
       end
       graphics.rectangle('fill', 55 + (j-1)*40, 105+(i-1)*40, 30, 30)
+      graphics.setColor(255,255,255)
+      if circuit.layers[i][j].type then
+        graphics.print(circuit.layers[i][j].type, 55 + (j-1)*40, 105+(i-1)*40)
+      end
     end
-    graphics.setColor(255,255,255)
+  end
+  for i=1,LAYER_NUM do
+    for j=1,NODE_PER_LAYER do
+      if circuit.layers[i][j].to then
+        local to_i, to_j = unpack(circuit.layers[i][j].to)
+        local x0, y0 = 55 + 20 + (j-1)*40, 105 + 20 + (i-1)*40
+        local x1, y1 = 55 + 20 + (to_j-1)*40, 105 + 20 + (to_i-1)*40
+        graphics.line(x0, y0, x1, y1)
+      end
+    end
   end
 end

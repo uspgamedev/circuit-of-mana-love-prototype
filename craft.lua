@@ -1,8 +1,8 @@
 
 local W, H
 
-local LAYER_NUM = 10
-local NODE_PER_LAYER = 7
+LAYER_NUM = 10
+NODE_PER_LAYER = 7
 
 local buttons = {}
 
@@ -75,7 +75,7 @@ function mousepressed(x, y, button)
     for v in pairs(buttons) do
       local b = buttons[v]
       if contains(x, y, b) then
-        b.action(circuit)
+        b.action(circuit, nodes)
       end
     end
   end

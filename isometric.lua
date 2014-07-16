@@ -1,4 +1,6 @@
 
+local interpreter = require 'interpreter'
+
 local scenario = love.graphics.newImage "assets/scenario_iso.png"
 local avatars = {
   {
@@ -15,8 +17,8 @@ function load()
 
 end
 
-function play()
-  print("SOOOOO MUCH 3D! I DEMAND SHADERS AND PARTICLE EFFECTS!")
+function play(circuit, nodes)
+  interpreter.cast(circuit, nodes)
 end
 
 function update(dt)

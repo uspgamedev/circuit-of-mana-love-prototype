@@ -1,4 +1,6 @@
 
+local interpreter = require 'interpreter'
+
 local avatars = {
   {
     pos = {-2, 0},
@@ -14,8 +16,8 @@ function load()
 
 end
 
-function play()
-  print("PEANUT BUTTER JELLY SANDWICH")
+function play(circuit, nodes)
+  interpreter.cast(circuit, nodes)
 end
 
 function update(dt)

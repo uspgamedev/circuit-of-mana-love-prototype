@@ -16,7 +16,7 @@ function love.load ()
   views = {}
   love.graphics.setBackgroundColor(100,100,100)
   for _,viewname in ipairs(viewnames) do
-    local chunk = assert(loadfile(viewname..".lua"))
+    local chunk = assert(love.filesystem.load(viewname..".lua"))
     local env = setmetatable({}, { __index = getfenv() })
     setfenv(chunk, env) ()
     views[viewname] = env

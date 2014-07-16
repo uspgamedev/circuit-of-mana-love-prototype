@@ -10,6 +10,8 @@ local circuit = {
   layers = {}
 }
 
+local nodes
+
 local current_node
 local current_layer
 local current_column
@@ -51,6 +53,7 @@ end
 function load()
   W = love.graphics.getWidth()
   H = love.graphics.getHeight()
+  nodes = love.filesystem.load "nodes.lua" ()
   for i=1,LAYER_NUM do
     circuit.layers[i] = {}
     for j=1,NODE_PER_LAYER do

@@ -10,18 +10,35 @@ local function accumulator(n)
   end
 end
 
-local function projectile (avatars, dt)
-  local hero = avatars[1]
-  local proj = {
-    pos = { hero.pos[1], hero.pos[2]-0.3 },
-    sprite = love.graphics.newImage "assets/fireball00.png"
-  }
-  table.insert(avatars, proj)
-  for i=1,1200 do
-    avatars, dt = coroutine.yield()
-    proj.pos[1] = proj.pos[1] + dt*5
+local colors = {
+  mana = {255, 255, 255},
+  fire = {255, 0, 0}
+}
+
+local function projectile(substance)
+  return function (avatars)
+    local hero = avatars[1]
+    local t, s = substance.type:match "(%w+):(%w+)"
+    local proj = {
+      pos = { hero.pos[1], hero.pos[2]-0.3 },
+      sprite = love.graphics.newImage "assets/fireball00.png",
+      color = (t == 'substance' and colors[s])
+    }
+    table.insert(avatars, proj)
+    for i=1,100 do
+      avatars = coroutine.yield()
+      proj.pos[1] = proj.pos[1] + 0.1
+    end
+    coroutine.yield()
+    local idx
+    for i,avatar in ipairs(avatars) do
+      if avatar == proj then
+        idx = i
+      end
+    end
+    table.remove(avatars, idx)
+    return true
   end
-  return true
 end
 
 return {
@@ -39,7 +56,7 @@ return {
   {
     name = "Projectile",
     action = function (mana)
-      return coroutine.wrap(projectile)
+      return coroutine.wrap(projectile(mana))
     end
   }
 }

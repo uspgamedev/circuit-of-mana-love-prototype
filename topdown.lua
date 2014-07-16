@@ -20,7 +20,7 @@ function play(circuit, nodes)
   interpreter.cast(circuit, nodes)
 end
 
-function update(dt)
+function update()
 
 end
 
@@ -29,6 +29,9 @@ local function draw_avatar (graphics, avatar)
   local w,h = avatar.sprite:getDimensions()
   graphics.push()
   graphics.translate(24*x, 24*y)
+  if avatar.color then
+    graphics.setColor(color)
+  end
   graphics.draw(
     avatar.sprite,
     0, 0, 0, 1, 1, w/2, 0.9*h

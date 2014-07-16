@@ -12,10 +12,10 @@ local avatars = {
   }
 }
 
-local tasks = {}
+local tasks
 
 function load()
-
+  tasks = {}
 end
 
 function play(circuit, nodes)
@@ -27,10 +27,10 @@ function play(circuit, nodes)
   end
 end
 
-function update(dt)
+function update()
   local to_be_removed = {}
   for task,_ in pairs(tasks) do
-    if task(avatars, dt) then
+    if task(avatars) then
       table.insert(to_be_removed, task)
     end
   end
@@ -44,6 +44,9 @@ local function draw_avatar (graphics, avatar)
   local w,h = avatar.sprite:getDimensions()
   graphics.push()
   graphics.translate(24*x, 24*y)
+  if avatar.color then
+    graphics.setColor(avatar.color)
+  end
   graphics.draw(
     avatar.sprite,
     0, 0, 0, 1, 1, w/2, 0.9*h

@@ -6,7 +6,7 @@ local current
 local MAX_MANA = 100
 
 local mana
-local manaGrowth = 30
+local manaGrowth = 5
 
 function love.load ()
   W = love.window.getWidth()
@@ -60,11 +60,19 @@ function love.draw ()
   end
 end
 
-function love.update (dt)
-  mana = mana + manaGrowth * dt
-  mana = mana > 100 and 100 or mana
-  views.craft.update(dt)
-  views[viewnames[current]].update(dt)
+do
+  local lag = 0
+  local GAME_TICK = 1/60
+  function love.update (dt)
+    lag = lag + dt
+    while lag >= GAME_TICK do
+      mana = mana + manaGrowth
+      mana = mana > 100 and 100 or mana
+      views.craft.update(dt)
+      views[viewnames[current]].update()
+      lag = lag - GAME_TICK
+    end
+  end
 end
 
 function drawMana (g)

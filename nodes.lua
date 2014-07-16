@@ -20,7 +20,7 @@ local function projectile(substance)
     local hero = avatars[1]
     local t, s = substance.type:match "(%w+):(%w+)"
     local proj = {
-      pos = { hero.pos[1], hero.pos[2]-0.3 },
+      pos = { hero.pos[1], hero.pos[2] },
       sprite = love.graphics.newImage "assets/fireball00.png",
       color = (t == 'substance' and colors[s])
     }

@@ -12,16 +12,31 @@ local avatars = {
   }
 }
 
-function load()
+local tasks
 
+function load()
+  tasks = {}
 end
 
 function play(circuit, nodes)
-  interpreter.cast(circuit, nodes)
+  local new_tasks = interpreter.cast(circuit, nodes)
+  if new_tasks then
+    for _,task in ipairs(new_tasks) do
+      tasks[task] = true
+    end
+  end
 end
 
 function update()
-
+  local to_be_removed = {}
+  for task,_ in pairs(tasks) do
+    if task(avatars) then
+      table.insert(to_be_removed, task)
+    end
+  end
+  for _,removed in ipairs(to_be_removed) do
+    tasks[removed] = nil
+  end
 end
 
 local function draw_avatar (graphics, avatar)
@@ -30,7 +45,7 @@ local function draw_avatar (graphics, avatar)
   graphics.push()
   graphics.translate(24*x, 24*y)
   if avatar.color then
-    graphics.setColor(color)
+    graphics.setColor(avatar.color)
   end
   graphics.draw(
     avatar.sprite,

@@ -4,34 +4,49 @@ local interpreter = require 'interpreter'
 local scenario = love.graphics.newImage "assets/scenario_iso.png"
 local avatars = {
   {
-    pos = {-8, 0},
+    pos = {-1, 0},
     sprite = love.graphics.newImage "assets/chara00.png"
   },
   {
-    pos = {16, 8},
+    pos = {2, 1},
     sprite = love.graphics.newImage "assets/chara01.png"
   }
 }
 
-function load()
+local tasks
 
+function load()
+  tasks = {}
 end
 
 function play(circuit, nodes)
-  interpreter.cast(circuit, nodes)
+  local new_tasks = interpreter.cast(circuit, nodes)
+  if new_tasks then
+    for _,task in ipairs(new_tasks) do
+      tasks[task] = true
+    end
+  end
 end
 
 function update()
-
+  local to_be_removed = {}
+  for task,_ in pairs(tasks) do
+    if task(avatars) then
+      table.insert(to_be_removed, task)
+    end
+  end
+  for _,removed in ipairs(to_be_removed) do
+    tasks[removed] = nil
+  end
 end
 
 local function draw_avatar (graphics, avatar)
   local x,y = unpack(avatar.pos)
   local w,h = avatar.sprite:getDimensions()
   graphics.push()
-  graphics.translate(2*x - 2*y, -x + -y)
+  graphics.translate(12*(2*x - 2*y), 12*(-x + -y))
   if avatar.color then
-    graphics.setColor(color)
+    graphics.setColor(avatar.color)
   end
   graphics.draw(
     avatar.sprite,

@@ -1,8 +1,6 @@
 
 local W, H
 
-local viewnames
-local views
 local current
 
 local MAX_MANA = 100
@@ -23,8 +21,14 @@ function love.load ()
     setfenv(chunk, env) ()
     views[viewname] = env
   end
-
   mana = 0
+  for _,names in pairs(viewnames) do
+    views[names].load()
+  end
+end
+
+function love.mousepressed(x, y, button)
+  views.craft.mousepressed(x, y, button)
 end
 
 function love.keypressed (key)

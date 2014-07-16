@@ -11,6 +11,14 @@ local avatars = {
   }
 }
 
+function load()
+
+end
+
+function play()
+  print("SOOOOO MUCH 3D! I DEMAND SHADERS AND PARTICLE EFFECTS!")
+end
+
 local function draw_avatar (graphics, avatar)
   local x,y = unpack(avatar.pos)
   local w,h = avatar.sprite:getDimensions()

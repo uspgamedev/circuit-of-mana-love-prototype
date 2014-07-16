@@ -7,9 +7,7 @@ local NODE_PER_LAYER = 7
 local buttons = {}
 
 local circuit = {
-  sources = {},
-  sinks = {},
-  layers = {},
+  layers = {}
 }
 
 local current_node

@@ -18,6 +18,10 @@ function play()
   print("PEANUT BUTTER JELLY SANDWICH")
 end
 
+function update(dt)
+
+end
+
 local function draw_avatar (graphics, avatar)
   local x,y = unpack(avatar.pos)
   local w,h = avatar.sprite:getDimensions()

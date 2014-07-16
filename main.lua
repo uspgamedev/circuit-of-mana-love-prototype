@@ -31,6 +31,10 @@ function love.mousepressed(x, y, button)
   views.craft.mousepressed(x, y, button)
 end
 
+function love.mousereleased(x, y, button)
+  views.craft.mousereleased(x, y, button)
+end
+
 function love.keypressed (key)
   if key == 'escape' then
     love.event.push 'quit'

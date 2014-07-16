@@ -10,8 +10,20 @@ function interpreter.cast (circuit, nodes)
       if slot.type and slot.to then
         local to_i, to_j = unpack(slot.to)
         if to_i > i then
+          --print("("..i..","..j..") -> ("..to_i..","..to_j..")")
+          --print "Input:"
+          --for _,mana in ipairs(slot.manas) do
+          --  table.foreach(mana, print)
+          --end
           local node = nodes[slot.type]
-          table.insert(circuit.layers[to_i][to_j].manas, node.action(unpack(slot.manas)))
+          local result = node.action(unpack(slot.manas))
+          --print "Output:"
+          if result then
+            table.foreach(result, print)
+            table.insert(circuit.layers[to_i][to_j].manas, result)
+          else
+            --print "<Nothing>"
+          end
         end
         slot.manas = {}
       end

@@ -63,6 +63,7 @@ end
 function love.update (dt)
   mana = mana + manaGrowth * dt
   mana = mana > 100 and 100 or mana
+  views.craft.update(dt)
   views[viewnames[current]].update(dt)
 end
 

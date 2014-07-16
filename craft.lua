@@ -57,7 +57,9 @@ function load()
   for i=1,LAYER_NUM do
     circuit.layers[i] = {}
     for j=1,NODE_PER_LAYER do
-      circuit.layers[i][j] = {}
+      circuit.layers[i][j] = {
+        manas = {}
+      }
     end
   end
   local i = 0
@@ -70,15 +72,19 @@ function load()
   end
 end
 
-function mousepressed(x, y, button)
-  if button == 'l' then
+function update (dt)
+  if love.mouse.isDown 'l' then
     for v in pairs(buttons) do
       local b = buttons[v]
+      local x, y = love.mouse.getPosition()
       if contains(x, y, b) then
         b.action(circuit, nodes)
       end
     end
   end
+end
+
+function mousepressed(x, y, button)
   local prev_current_node = current_node
   local prev_current_layer = current_layer
   local prev_current_column = current_column

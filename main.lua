@@ -5,6 +5,11 @@ local viewnames
 local views
 local current
 
+local MAX_MANA = 100
+
+local mana
+local manaGrowth = 30
+
 function love.load ()
   W = love.window.getWidth()
   H = love.window.getHeight()
@@ -18,6 +23,8 @@ function love.load ()
     setfenv(chunk, env) ()
     views[viewname] = env
   end
+
+  mana = 0
 end
 
 function love.keypressed (key)
@@ -44,6 +51,21 @@ function love.draw ()
     g.push()
     g.translate(W/2, 0)
     views.craft.draw(g, W/2, H)
+    drawMana(g)
     g.pop()
   end
+end
+
+function love.update (dt)
+  mana = mana + manaGrowth * dt
+  mana = mana > 100 and 100 or mana
+end
+
+function drawMana (g)
+  g.print(string.format("Mana: %.0f", mana), 10, 10)
+  g.setColor(200, 30, 30)
+  g.rectangle("line", 9, 29, MAX_MANA + 2, 12)
+  g.setColor(30, 200, 30)
+  g.rectangle("fill", 10, 30, mana, 10)
+  g.setColor(0, 0, 0)
 end

@@ -114,14 +114,15 @@ function mousereleased(x, y, button)
   local i = math.floor((x - 20) / 60) + 1
   local j = math.floor((y - 50) / 60) + 1
   if selected then
-    if insideCircle(x, y, 60 * i - 10, 20 + 60 * j, 20) then
+    if i > 0 and i < 7 and j > 0 and j < 7 and insideCircle(x, y, 60 * i - 10, 20 + 60 * j, 20) then
       balls[i][j].name = selected
     end
     selected = nil
   elseif line then
     local di = i - line[1]
     local dj = j - line[2]
-    if math.abs(di) <= 1 and math.abs(dj) <= 1 and di * dj == 0 and di ~= dj and insideCircle(x, y, 60 * i - 10, 20 + 60 * j, 20) then
+    if i > 0 and i < 7 and j > 0 and j < 7 and math.abs(di) <= 1 and 
+        math.abs(dj) <= 1 and di * dj == 0 and di ~= dj and insideCircle(x, y, 60 * i - 10, 20 + 60 * j, 20) then
       local d = di == 1 and 1 or dj == 1 and 2 or di == -1 and 3 or 4
       balls[line[1]][line[2]].dirs[d] = true
     end
@@ -244,6 +245,7 @@ local function checkValidity()
   checked = {}
   for i = 1, 6 do checked[i] = {} end
   valid = isValid(1, 1)
+  return valid
 end
 
 local timeToCheck = 0

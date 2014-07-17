@@ -2,6 +2,7 @@ local balls
 local colors
 local selected
 local line
+local valid
 
 local objs
 
@@ -78,6 +79,13 @@ function mousepressed(x, y, button)
     if i > 0 and i < 7 and j > 0 and j < 7 and insideCircle(x, y, 60 * i - 10, 20 + 60 * j, 20) then
       line = {i, j}
     end
+  elseif button == 'r' then
+    x = x - W/2
+    local i = math.floor((x - 20) / 60) + 1
+    local j = math.floor((y - 50) / 60) + 1
+    if i > 0 and i < 7 and j > 0 and j < 7 and insideCircle(x, y, 60 * i - 10, 20 + 60 * j, 20) then
+      balls[i][j].name = nil
+    end
   end
 end
 
@@ -105,6 +113,7 @@ end
 local im = love.graphics.newImage "assets/arrow.png"
 function draw (graphics, width, height)
   graphics.print("Craft", width/2, 12)
+  graphics.print("Circuit is " .. (valid and "valid" or "invalid"), width/2, 25)
   
   for v in pairs(buttons) do
     drawButton(graphics, buttons[v])
@@ -177,4 +186,36 @@ function build()
     i = i + 1
   end
 
+end
+
+local checked
+
+local function isValid(i, j)
+  if checked[i][j] then return false end
+  checked[i][j] = true
+  local any = balls[i][j].dirs[1] or balls[i][j].dirs[2] or balls[i][j].dirs[3] or balls[i][j].dirs[4]
+  if (not any and balls[i][j].name ~= "output") or
+      (any and balls[i][j].name == "output") then return false end
+  if balls[i][j].dirs[1] and not isValid(i + 1, j) then return false end
+  if balls[i][j].dirs[2] and not isValid(i, j + 1) then return false end
+  if balls[i][j].dirs[3] and not isValid(i - 1, j) then return false end
+  if balls[i][j].dirs[4] and not isValid(i, j - 1) then return false end
+  return true
+end
+
+local function checkValidity()
+  -- Starts in (1,1); doesn't matter where generators are
+  -- no loops or joining for now
+  checked = {}
+  for i = 1, 6 do checked[i] = {} end
+  valid = isValid(1, 1)
+end
+
+local timeToCheck = 0
+function update(dt)
+  timeToCheck = timeToCheck + dt
+  if timeToCheck > .4 then
+    timeToCheck = timeToCheck - .4
+    checkValidity()
+  end
 end

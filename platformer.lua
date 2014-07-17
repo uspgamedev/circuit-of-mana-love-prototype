@@ -53,16 +53,23 @@ end
 
 local function draw_avatar (graphics, avatar)
   local x,y = unpack(avatar.pos)
-  local w,h = avatar.sprite:getDimensions()
   graphics.push()
   graphics.translate(24*x, 24*y)
   if avatar.color then
     graphics.setColor(avatar.color)
   end
-  graphics.draw(
-    avatar.sprite,
-    0, 0, 0, 1, 1, w/2, 0.9*h
-  )
+  if avatar.sprite == 'laser' then
+    local old_width = graphics.getLineWidth()
+    graphics.setLineWidth(10)
+    graphics.line(x, y, x+240, y)
+    graphics.setLineWidth(old_width)
+  else
+    local w,h = avatar.sprite:getDimensions()
+    graphics.draw(
+      avatar.sprite,
+      0, 0, 0, 1, 1, w/2, 0.9*h
+    )
+  end
   graphics.pop()
   graphics.setColor(255, 255, 255, 255)
 end

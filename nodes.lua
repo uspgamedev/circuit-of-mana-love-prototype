@@ -41,6 +41,29 @@ local function projectile(substance)
   end
 end
 
+local function laser(substance)
+  return function (avatars)
+    local hero = avatars[1]
+    local t, s = substance.type:match "(%w+):(%w+)"
+    local lazor = {
+      pos = { hero.pos[1], hero.pos[2] },
+      sprite = 'laser',
+      color = (t == 'substance' and colors[s])
+    }
+    table.insert(avatars, lazor)
+    coroutine.yield()
+    avatars = coroutine.yield()
+    local idx
+    for i,avatar in ipairs(avatars) do
+      if avatar == lazor then
+        idx = i
+      end
+    end
+    table.remove(avatars, idx)
+    return true
+  end
+end
+
 return {
   {
     name = "Accumulator",
@@ -57,6 +80,12 @@ return {
     name = "Projectile",
     action = function (mana)
       return coroutine.wrap(projectile(mana))
+    end
+  },
+  {
+    name = "Laser",
+    action = function (mana)
+      return coroutine.wrap(laser(mana))
     end
   }
 }

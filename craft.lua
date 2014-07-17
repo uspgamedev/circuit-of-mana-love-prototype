@@ -3,6 +3,7 @@ local colors
 local selected
 local line
 local valid
+local opts
 
 local objs
 
@@ -57,6 +58,12 @@ local function insideCircle(x1, y1, x2, y2, r)
   return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) <= r * r
 end
 
+local function insideRect(x1, y1, x2, y2, dx, dy)
+  if x1 < x2 or x1 > x2 + dx then return false end
+  if y1 < y2 or y1 > y2 + dy then return false end
+  return true
+end
+
 function mousepressed(x, y, button)
   if button == 'l' then
     for v in pairs(buttons) do
@@ -67,10 +74,22 @@ function mousepressed(x, y, button)
     end
     x = x - W/2
 
+    local s
+    for _, opt in ipairs(opts) do
+      if insideRect(x, y, opt.pos[1], opt.pos[2], opt.size[1], opt.size[2]) then
+        s = opt
+        break
+      end
+    end
+    if s then
+      for _, opt in ipairs(opts) do opt.selected = nil end
+      s.selected = true
+    end
+
     for _, obj in ipairs(objs) do
       if insideCircle(obj.pos[1], obj.pos[2], x, y, 10) then
         selected = obj.name
-        return
+        break
       end
     end
 
@@ -148,6 +167,13 @@ function draw (graphics, width, height)
     g.circle("fill", love.mouse.getX() - W/2, love.mouse.getY(), 10)
   end
 
+  for _, opt in ipairs(opts) do
+    g.setColor(40, opt.selected and 120 or 40, opt.selected and 20 or 70)
+    g.rectangle("fill", opt.pos[1], opt.pos[2], opt.size[1], opt.size[2])
+    g.setColor(255, 255, 255)
+    g.printf(opt.text, opt.pos[1], opt.pos[2] + opt.size[2]/2 - 8, opt.size[1], "center")
+  end
+
   g.setColor(255, 255, 255)
 end
 
@@ -186,6 +212,15 @@ function build()
     i = i + 1
   end
 
+  opts = {}
+  for i, n in ipairs {"Bullet", "Laser", "Trap"} do
+    opts[i] = {
+      text = n,
+      pos = {120 * i - 100, H - 190},
+      size = {100, 40}
+    }
+  end
+  opts[1].selected = true
 end
 
 local checked

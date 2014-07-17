@@ -19,7 +19,8 @@ local current_column
 local BUTTON_WIDTH = 100;
 local BUTTON_HEIGHT = 50;
 
-local BUTTON_COLOR = {100, 172, 235}
+local BUTTON_COLOR_UP = {100, 172, 235}
+local BUTTON_COLOR_DOWN = {120, 192, 255}
 local TEXT_COLOR = {255, 255, 255}
 
 local function newButton(px, py, txt, func)
@@ -28,7 +29,12 @@ local function newButton(px, py, txt, func)
 end
 
 local function drawButton(graphics, button)
-	graphics.setColor(unpack(BUTTON_COLOR))
+  if button.down then
+    graphics.setColor(unpack(BUTTON_COLOR_DOWN))
+  else
+    graphics.setColor(unpack(BUTTON_COLOR_UP))
+  end
+  button.down = nil
 	graphics.rectangle("fill", button.x, button.y, BUTTON_WIDTH, BUTTON_HEIGHT)
 
 	local textWidth = graphics.getFont():getWidth(button.text)
@@ -79,6 +85,7 @@ function update (dt)
       local x, y = love.mouse.getPosition()
       if contains(x, y, b) then
         b.action(circuit, nodes)
+        b.down = true
       end
     end
   end

@@ -15,7 +15,19 @@ function load()
 end
 
 function play()
-  print("PEW PEW PEW, SHOOTING MAGICS, PEW PEW PEW, BOOOOOOM")
+  local m = views.craft.getMagic()
+  if not m then return end
+  if m.type == "Bullet" then
+    print "pew pew pew"
+  elseif m.type == "Laser" then
+    print "bzzzzzzz, or something like that"
+  elseif m.type == "Trap" then
+    print "Wait for it.... BOOM"
+  end
+  print "Effects:"
+  for _, eff in ipairs(m.effects) do
+    io.write("  ", eff, "\n")
+  end
 end
 
 local function draw_avatar (graphics, avatar)

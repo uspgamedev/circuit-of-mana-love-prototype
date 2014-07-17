@@ -256,3 +256,47 @@ function update(dt)
     checkValidity()
   end
 end
+
+local function translateEffect(mana)
+  return mana
+end
+
+local function gAux(i, j, manaType)
+  local n = balls[i][j].name
+  if n == "generator" then n = nil end
+  if n == "output" then return {translateEffect(manaType)} end
+  manaType = n or manaType
+  local out = {}
+  for d = 1, 4 do
+    if balls[i][j].dirs[d] then
+      local ni = d == 1 and i + 1 or d == 3 and i - 1 or i
+      local nj = d == 2 and j + 1 or d == 4 and j - 1 or j
+      local outs = gAux(ni, nj, manaType)
+      for _, o in ipairs(outs) do
+        if o ~= "bland" then
+          out[#out + 1] = o
+        end
+      end
+    end
+  end
+
+  return out
+end
+
+local function getEffects()
+  return gAux(1, 1, "bland")
+end
+
+function getMagic()
+  if not checkValidity() then return end
+  local m = {}
+
+  -- getting mode
+  for _, opt in ipairs(opts) do
+    if opt.selected then m.type = opt.text break end
+  end
+
+  m.effects = getEffects()
+  m.selfUse = false
+  return m
+end

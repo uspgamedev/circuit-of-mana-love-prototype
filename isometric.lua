@@ -28,6 +28,18 @@ function play(circuit, nodes)
   end
 end
 
+function keypressed (key)
+  if key == 'up' then
+    avatars[1].pos[2] = avatars[1].pos[2]+.2
+  elseif key == 'down' then
+    avatars[1].pos[2] = avatars[1].pos[2]-.2
+  elseif key == 'right' then
+    avatars[1].pos[1] = avatars[1].pos[1]+.2
+  elseif key == 'left' then
+    avatars[1].pos[1] = avatars[1].pos[1]-.2
+  end
+end
+
 function update()
   local to_be_removed = {}
   for task,_ in pairs(tasks) do

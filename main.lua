@@ -36,6 +36,8 @@ function love.keypressed (key)
     love.event.push 'quit'
   elseif tonumber(key) then
     current = tonumber(key)
+  elseif views[viewnames[current]].keypressed then
+    views[viewnames[current]].keypressed(key)
   end
 end
 

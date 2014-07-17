@@ -131,7 +131,7 @@ function draw (graphics, width, height)
     end
     graphics.rectangle('fill', 10, 100+(i-1)*20, 19, 19)
     graphics.setColor(255,255,255)
-    graphics.print(i, 10, 100+(i-1)*20)
+    graphics.printf(i, 10, 100+(i-1)*20, 20, 'center')
   end
   for i=1,LAYER_NUM do
     graphics.setColor(50,80,50)

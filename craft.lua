@@ -198,7 +198,6 @@ function build()
     generator = {255, 255, 0},
     fire = {255, 0, 0},
     dash = {255, 255, 255},
-    shield = {30, 30, 200},
     health = {30, 200, 30},
     output = {0, 0 ,0}
   }
@@ -208,7 +207,7 @@ function build()
   for k in pairs(colors) do
     objs[i] = {
       name = k,
-      pos = {60 * i - 10, H - 120}
+      pos = {70 * i - 10, H - 120}
     }
     i = i + 1
   end
@@ -227,7 +226,8 @@ end
 local checked
 
 local function isValid(i, j)
-  if checked[i][j] then return false end
+  if checked[i][j] == true then return false end
+  if checked[i][j] == false then return true end
   checked[i][j] = true
   local any = balls[i][j].dirs[1] or balls[i][j].dirs[2] or balls[i][j].dirs[3] or balls[i][j].dirs[4]
   if (not any and balls[i][j].name ~= "output") or
@@ -236,6 +236,7 @@ local function isValid(i, j)
   if balls[i][j].dirs[2] and not isValid(i, j + 1) then return false end
   if balls[i][j].dirs[3] and not isValid(i - 1, j) then return false end
   if balls[i][j].dirs[4] and not isValid(i, j - 1) then return false end
+  checked[i][j] = false
   return true
 end
 
@@ -244,7 +245,16 @@ local function checkValidity()
   -- no loops or joining for now
   checked = {}
   for i = 1, 6 do checked[i] = {} end
-  valid = isValid(1, 1)
+  local any = false
+  for i = 1, 6 do
+    for j = 1, 6 do
+      if balls[i][j].name == "generator" then
+        any = true
+        if not isValid(i, j) then valid = false return valid end
+      end
+    end
+  end
+  valid = any
   return valid
 end
 
@@ -258,33 +268,57 @@ function update(dt)
 end
 
 local function translateEffect(mana)
-  return mana
+  return mana == "generator" and "bland" or mana
 end
 
-local function gAux(i, j, manaType)
-  local n = balls[i][j].name
-  if n == "generator" then n = nil end
-  if n == "output" then return {translateEffect(manaType)} end
-  manaType = n or manaType
-  local out = {}
-  for d = 1, 4 do
-    if balls[i][j].dirs[d] then
-      local ni = d == 1 and i + 1 or d == 3 and i - 1 or i
-      local nj = d == 2 and j + 1 or d == 4 and j - 1 or j
-      local outs = gAux(ni, nj, manaType)
-      for _, o in ipairs(outs) do
-        if o ~= "bland" then
-          out[#out + 1] = o
-        end
+local function recipe(ings)
+  local r = {}
+  for _, i in ipairs(ings) do r[i] = true end
+  return r
+end
+
+local recipes = {
+  {2, recipe{"fire", "health"}, "shield"}
+}
+
+local function mix(manas)
+  local s = #manas
+  if s == 1 then return manas[1] end
+  local res = "bland"
+  for _, r in ipairs(recipes) do
+    if r[1] == s then
+      local match = true
+      for _, i in ipairs(manas) do
+        if not r[2][i] then match = false break end
       end
+      if match then res = r[3] break end
     end
   end
+  return res
+end
 
-  return out
+local function gAux(i, j)
+  local n = balls[i][j].name
+  if n and n ~= "output" then return translateEffect(n) end
+  local srcs = {}
+  if i > 1 and balls[i - 1][j].dirs[1] then srcs[#srcs + 1] = gAux(i - 1, j) end
+  if j > 1 and balls[i][j - 1].dirs[2] then srcs[#srcs + 1] = gAux(i, j - 1) end
+  if i < 6 and balls[i + 1][j].dirs[3] then srcs[#srcs + 1] = gAux(i + 1, j) end
+  if j < 6 and balls[i][j + 1].dirs[4] then srcs[#srcs + 1] = gAux(i, j + 1) end
+  return mix(srcs)
 end
 
 local function getEffects()
-  return gAux(1, 1, "bland")
+  local effs = {}
+  for i = 1, 6 do
+    for j = 1, 6 do
+      if balls[i][j].name == "output" and checked[i][j] ~= nil then
+        local eff = gAux(i, j)
+        if eff ~= "bland" then effs[#effs + 1] = gAux(i, j) end
+      end
+    end
+  end
+  return effs
 end
 
 function getMagic()

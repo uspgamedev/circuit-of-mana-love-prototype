@@ -1,6 +1,7 @@
 Generator - Yellow
 Fire      - Red
 Dash      - White
-Shield    - Blue
 Health    - Green
 Output    - Black
+
+Shield = Fire + Health

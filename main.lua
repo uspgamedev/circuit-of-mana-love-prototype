@@ -22,13 +22,18 @@ function love.load ()
     views[viewname] = env
   end
   mana = 0
-  for _,names in pairs(viewnames) do
-    views[names].load()
+  for _,name in pairs(viewnames) do
+    local v = views[name]
+    if v.load then v.load() end
   end
 end
 
 function love.mousepressed(x, y, button)
   views.craft.mousepressed(x, y, button)
+end
+
+function love.mousereleased(x, y, button)
+  views.craft.mousereleased(x, y, button)
 end
 
 function love.keypressed (key)
@@ -55,6 +60,7 @@ function love.draw ()
     g.push()
     g.translate(W/2, 0)
     views.craft.draw(g, W/2, H)
+    g.setColor(255, 255, 255)
     drawMana(g)
     g.pop()
   end
@@ -63,6 +69,8 @@ end
 function love.update (dt)
   mana = mana + manaGrowth * dt
   mana = mana > 100 and 100 or mana
+
+  views.craft.update(dt)
 end
 
 function drawMana (g)

@@ -27,6 +27,7 @@ local function calculate(comp)
   for v in pairs(comp.inputs) do
     local c = comp.inputs[v]
     if c.ctype ~= "elements" then 
+      calculate(c)
       comp.value = c.action(comp.value)
     end
   end

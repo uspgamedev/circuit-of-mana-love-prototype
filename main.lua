@@ -6,7 +6,16 @@ local current
 local MAX_MANA = 100
 
 local mana
-local manaGrowth = 5
+local manaGrowth = 0.5
+
+function spendMana (x)
+  if mana >= x then
+    mana = mana - x
+    return true
+  else
+    return false
+  end
+end
 
 function love.load ()
   W = love.window.getWidth()

@@ -12,7 +12,8 @@ end
 
 local colors = {
   mana = {255, 255, 255},
-  fire = {255, 0, 0}
+  fire = {255, 0, 0},
+  antimagic = {0, 0, 255}
 }
 
 local function projectile(substance)
@@ -109,6 +110,13 @@ return {
     name = "Fire",
     action = function (mana)
       mana.type = 'substance:fire'
+      return mana
+    end
+  },
+  {
+    name = "Antimagic",
+    action = function (mana)
+      mana.type = 'substance:antimagic'
       return mana
     end
   },

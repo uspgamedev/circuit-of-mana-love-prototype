@@ -2,6 +2,7 @@
 local interpreter = {}
 
 function interpreter.cast (circuit, nodes)
+  if not spendMana(1) then return end
   for j,slot in ipairs(circuit.layers[1]) do
     table.insert(slot.manas, { type = 'substance:mana', amount = 1 })
   end

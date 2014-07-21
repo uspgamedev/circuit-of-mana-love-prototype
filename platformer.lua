@@ -43,13 +43,17 @@ end
 
 function update()
   local to_be_removed = {}
+  local extra_tasks = {}
   for task,_ in pairs(tasks) do
-    if task(avatars) then
+    if task(avatars, extra_tasks) then
       table.insert(to_be_removed, task)
     end
   end
   for _,removed in ipairs(to_be_removed) do
     tasks[removed] = nil
+  end
+  for _,task in ipairs(extra_tasks) do
+    tasks[task] = true
   end
 end
 

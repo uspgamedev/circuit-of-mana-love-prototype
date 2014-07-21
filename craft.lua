@@ -107,7 +107,13 @@ function mousepressed(x, y, button)
     for j=1,NODE_PER_LAYER do
       if contains2(x, y, {x=55 + (j-1)*40, y=105+(i-1)*40, w=30, h=30}) then
         if prev_current_node then
+          local node = nodes[prev_current_node]
           circuit.layers[i][j].type = prev_current_node
+          if node.factory then
+            circuit.layers[i][j].action = node.action()
+          else
+            circuit.layers[i][j].action = node.action
+          end
         elseif prev_current_layer and prev_current_column  then
           circuit.layers[prev_current_layer][prev_current_column].to = {i,j}
         else

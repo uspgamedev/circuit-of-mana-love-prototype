@@ -13,7 +13,8 @@ end
 local colors = {
   mana = {255, 255, 255},
   fire = {255, 0, 0},
-  antimagic = {0, 0, 255}
+  antimagic = {0, 0, 255},
+  hidden = {0, 255, 0}
 }
 
 local function projectile(substance)
@@ -89,7 +90,7 @@ local function dist (obj1, obj2)
 end
 
 local function field(substance)
-  return function (avatars)
+  return function (avatars, extra)
     local hero = avatars[2]
     local t, s = substance.type:match "(%w+):(%w+)"
     local field = {
@@ -100,16 +101,27 @@ local function field(substance)
       magic = s
     }
     table.insert(avatars, field)
-    avatars = coroutine.yield()
-    if field.magic == 'antimagic' then
-      local removed = {}
-      for i,avatar in ipairs(avatars) do
-        if avatar ~= field and avatar.magic and avatar.magic ~= 'antimagic' and dist(avatar, field) <= 2 then
-          table.insert(removed, i)
+    for i=1,substance.amount do
+      avatars, extra = coroutine.yield()
+      if field.magic == 'antimagic' then
+        local removed = {}
+        for i,avatar in ipairs(avatars) do
+          if avatar ~= field and avatar.magic and avatar.magic ~= 'antimagic' and dist(avatar, field) <= 2 then
+            table.insert(removed, i)
+          end
         end
-      end
-      for i=#removed,1,-1 do
-        table.remove(avatars, removed[i])
+        for i=#removed,1,-1 do
+          table.remove(avatars, removed[i])
+        end
+      elseif field.magic == 'hidden' then
+        local done = false
+        for i,avatar in ipairs(avatars) do
+          if avatar ~= field and avatar ~= hero and not avatar.magic and dist(avatar, field) <= 2 then
+            table.insert(extra, substance.object)
+            done = true
+          end
+        end
+        if done then break end
       end
     end
     avatars = coroutine.yield()
@@ -127,7 +139,8 @@ end
 return {
   {
     name = "Accumulator",
-    action = accumulator(100)
+    action = function () return accumulator(100) end,
+    factory = true
   },
   {
     name = "Fire",
@@ -140,6 +153,15 @@ return {
     name = "Antimagic",
     action = function (mana)
       mana.type = 'substance:antimagic'
+      return mana
+    end
+  },
+  {
+    name = "Hidden",
+    action = function (mana, object)
+      if not object then return end
+      mana.type = 'substance:hidden'
+      mana.object = object
       return mana
     end
   },

@@ -8,11 +8,10 @@ function interpreter.cast (circuit, nodes)
   end
   for i,layer in ipairs(circuit.layers) do
     for j,slot in ipairs(layer) do
-      if #slot.manas > 0 and slot.type and slot.to then
+      if #slot.manas > 0 and slot.action and slot.to then
         local to_i, to_j = unpack(slot.to)
         if to_i > i then
-          local node = nodes[slot.type]
-          local result = node.action(unpack(slot.manas))
+          local result = slot.action(unpack(slot.manas))
           if result then
             table.insert(circuit.layers[to_i][to_j].manas, result)
           end

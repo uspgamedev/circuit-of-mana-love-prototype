@@ -79,10 +79,10 @@ function load()
 end
 
 function update (dt)
+  local x, y = love.mouse.getPosition()
   if love.mouse.isDown 'l' then
     for v in pairs(buttons) do
       local b = buttons[v]
-      local x, y = love.mouse.getPosition()
       if contains(x, y, b) then
         b.action(circuit, nodes)
         b.down = true
@@ -132,6 +132,15 @@ function draw (graphics, width, height)
     graphics.rectangle('fill', 10, 100+(i-1)*20, 19, 19)
     graphics.setColor(255,255,255)
     graphics.printf(i, 10, 100+(i-1)*20, 20, 'center')
+    do
+      local x,y = love.mouse.getPosition()
+      if nodes[i] and contains2(x, y, {x=10, y=100+(i-1)*20, w=19, h=19}) then
+        graphics.setColor(50,100,150)
+        graphics.rectangle('fill', 10-100, 100+(i-1)*20, 100, 20)
+        graphics.setColor(255,255,255)
+        graphics.printf(nodes[i].name, 10-100, 100+(i-1)*20, 100, 'right')
+      end
+    end
   end
   for i=1,LAYER_NUM do
     graphics.setColor(50,80,50)

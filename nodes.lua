@@ -5,7 +5,7 @@ local function accumulator(n)
     total = total + mana.amount
     if total >= n then
       total = 0
-      return { type = 'substance:mana', amount = 10 }
+      return { type = 'substance:mana', amount = n }
     end
   end
 end
@@ -64,6 +64,17 @@ local function laser(substance)
   end
 end
 
+local function impulse(mana)
+  return function (avatars)
+    local hero = avatars[1]
+    for i=1,mana.amount/20 do
+      avatars = coroutine.yield()
+      hero.pos[1] = hero.pos[1] + 0.5
+    end
+    return true
+  end
+end
+
 return {
   {
     name = "Accumulator",
@@ -86,6 +97,12 @@ return {
     name = "Laser",
     action = function (mana)
       return coroutine.wrap(laser(mana))
+    end
+  },
+  {
+    name = "Impulse",
+    action = function (mana)
+      return coroutine.wrap(impulse(mana))
     end
   }
 }

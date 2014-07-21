@@ -36,7 +36,9 @@ local function projectile(substance)
         idx = i
       end
     end
-    table.remove(avatars, idx)
+    if idx then
+      table.remove(avatars, idx)
+    end
     return true
   end
 end
@@ -75,6 +77,29 @@ local function impulse(mana)
   end
 end
 
+local function field(substance)
+  return function (avatars)
+    local hero = avatars[2]
+    local t, s = substance.type:match "(%w+):(%w+)"
+    local field = {
+      pos = { hero.pos[1], hero.pos[2] },
+      sprite = 'field',
+      color = (t == 'substance' and colors[s])
+    }
+    table.insert(avatars, field)
+    coroutine.yield()
+    avatars = coroutine.yield()
+    local idx
+    for i,avatar in ipairs(avatars) do
+      if avatar == field then
+        idx = i
+      end
+    end
+    table.remove(avatars, idx)
+    return true
+  end
+end
+
 return {
   {
     name = "Accumulator",
@@ -103,6 +128,12 @@ return {
     name = "Impulse",
     action = function (mana)
       return coroutine.wrap(impulse(mana))
+    end
+  },
+  {
+    name = "Field",
+    action = function (mana)
+      return coroutine.wrap(field(mana))
     end
   }
 }

@@ -63,6 +63,8 @@ local function draw_avatar (graphics, avatar)
     graphics.setLineWidth(10)
     graphics.line(x, y, x+240, y)
     graphics.setLineWidth(old_width)
+  elseif avatar.sprite == 'field' then
+    graphics.circle('line', x, y, 50)
   else
     local w,h = avatar.sprite:getDimensions()
     graphics.draw(

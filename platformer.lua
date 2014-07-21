@@ -3,10 +3,12 @@ local interpreter = require 'interpreter'
 
 local avatars = {
   {
+    tag = "hero 1",
     pos = {-2, 0},
     sprite = love.graphics.newImage "assets/chara00.png"
   },
   {
+    tag = "hero 2",
     pos = {2, 0},
     sprite = love.graphics.newImage "assets/chara01.png"
   }

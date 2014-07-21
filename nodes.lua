@@ -21,9 +21,11 @@ local function projectile(substance)
     local hero = avatars[1]
     local t, s = substance.type:match "(%w+):(%w+)"
     local proj = {
+      tag = "projectile",
       pos = { hero.pos[1], hero.pos[2] },
       sprite = love.graphics.newImage "assets/fireball00.png",
-      color = (t == 'substance' and colors[s])
+      color = (t == 'substance' and colors[s]),
+      magic = true
     }
     table.insert(avatars, proj)
     for i=1,100 do
@@ -49,9 +51,11 @@ local function laser(substance)
     local hero = avatars[1]
     local t, s = substance.type:match "(%w+):(%w+)"
     local lazor = {
+      tag = "laser",
       pos = { hero.pos[1], hero.pos[2] },
       sprite = 'laser',
-      color = (t == 'substance' and colors[s])
+      color = (t == 'substance' and colors[s]),
+      magic = true
     }
     table.insert(avatars, lazor)
     coroutine.yield()
@@ -78,17 +82,36 @@ local function impulse(mana)
   end
 end
 
+local function dist (obj1, obj2)
+  local x1,y1 = unpack(obj1.pos)
+  local x2,y2 = unpack(obj2.pos)
+  return math.sqrt((x1-x2)^2 + (y1-y2)^2)
+end
+
 local function field(substance)
   return function (avatars)
     local hero = avatars[2]
     local t, s = substance.type:match "(%w+):(%w+)"
     local field = {
+      tag = "field",
       pos = { hero.pos[1], hero.pos[2] },
       sprite = 'field',
-      color = (t == 'substance' and colors[s])
+      color = (t == 'substance' and colors[s]),
+      magic = s
     }
     table.insert(avatars, field)
-    coroutine.yield()
+    avatars = coroutine.yield()
+    if field.magic == 'antimagic' then
+      local removed = {}
+      for i,avatar in ipairs(avatars) do
+        if avatar ~= field and avatar.magic and avatar.magic ~= 'antimagic' and dist(avatar, field) <= 2 then
+          table.insert(removed, i)
+        end
+      end
+      for i=#removed,1,-1 do
+        table.remove(avatars, removed[i])
+      end
+    end
     avatars = coroutine.yield()
     local idx
     for i,avatar in ipairs(avatars) do
@@ -96,7 +119,7 @@ local function field(substance)
         idx = i
       end
     end
-    table.remove(avatars, idx)
+   table.remove(avatars, idx)
     return true
   end
 end

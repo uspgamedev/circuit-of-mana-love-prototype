@@ -4,10 +4,12 @@ local interpreter = require 'interpreter'
 local scenario = love.graphics.newImage "assets/scenario_iso.png"
 local avatars = {
   {
+    tag = "hero 1",
     pos = {-1, 0},
     sprite = love.graphics.newImage "assets/chara00.png"
   },
   {
+    tag = "hero 2",
     pos = {2, 1},
     sprite = love.graphics.newImage "assets/chara01.png"
   }
